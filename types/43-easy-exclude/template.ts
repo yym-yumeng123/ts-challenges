@@ -12,4 +12,4 @@ const exclude = (T, U) => {
   }
 };
 
-type a = Exclude<"a" | "b" | "c", "a">; // a: 'b' | 'c'
+type a = Exclude<"a" | "b" | "c", "c">; // "a" | "b"
