@@ -5,6 +5,12 @@ ts 类型体操
 ### extends 条件判断
 
 ```ts
+T extends U ? X : Y // 如果 T 包含的类型 是 U包含的类型的 '子集'，那么取结果X，否则取结果Y
+
+T 满足 U, 你需要的我有, 我就满足你
+```
+
+```ts
 interface Animal {
   eat(): void;
 }
