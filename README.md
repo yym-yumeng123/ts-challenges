@@ -131,3 +131,93 @@ type A2 = Pick<A, 'name'|'noSuchKey'>
 
 K extends keyof T 则是用来约束K的条件，即，传入K的参数必须使得这个条件为真，否则ts就会报错，也就是说，K的联合项必须来自接口T的属性
 ```
+
+### 泛型
+
+```ts
+/**
+ * T => Type; K => Key; V => Value; E => Element
+ * @param value 类型不确定
+ * @returns T
+ */
+function identity<T>(value: T): T {
+  return value;
+}
+
+identity(1);
+
+function identity<T, U>(value: T, message: U): T {
+  console.log(message);
+  return value;
+}
+
+identity<number, string>(12, "yym");
+```
+
+```ts
+// 普通类型定义
+type Duck<T> = { name: string; type: T };
+// 普通类型使用
+const duck: Duck<string> = { name: "鸭子", type: "animal" };
+
+// 类定义
+class Bird<T> {
+  private type: T;
+  constructor(type: T) {
+    this.type = type;
+  }
+}
+const bird: Bird<string> = new Bird<string>("animal");
+
+// 函数定义
+function swipe<T, U>(value: [T, U]): [U, T] {
+  return [value[1], value[0]];
+}
+swipe<string, string>(["bird", "duck"]);
+
+类型名 < 泛型列表 > 具体类型定义;
+
+// 泛型推导和默认值
+泛型名 = 默认类型;
+
+// 泛型约束
+function sum<T extends number>(value: T[]): number {
+  let count = 0;
+  value.forEach((v) => (count += v));
+  return count;
+}
+// U 一定是 T 的 key 类型中的子集
+function pick<T, U extends keyof T>() {}
+泛型名 extends 类型
+
+
+// 泛型条件
+T extends U ? X : Y // 条件类型会以一个条件表达式进行类型关系检测，从而在两种类型中选择其一, 这里便不限制 T 一定要是 U 的子类型，如果是 U 子类型，则将 T 定义为 X 类型，否则定义为 Y 类型
+泛型名A extends 类型B ? 类型C : 类型D
+
+// 泛型推断 infer
+infer 的中文是 "推断" 的意思, 一般是搭配上面的泛型条件语句使用的，所谓推断，就是你不用预先指定在泛型列表中，在运行时会自动判断，不过你得先预定义好整体的结构
+// {t: infer Test}可以看成是一个包含t属性的类型定义, 这个t属性的 value 类型通过infer进行推断后会赋值给Test类型, 如果泛型实际参数符合{t: infer Test}的定义那么返回的就是Test类型，否则默认给缺省的string类型
+type Fo<T> = T extends { t: infer Test } ? Test : string;
+type one = Fo<number>; // string
+type two = Fo<{ t: boolean }>; // boolean
+type three = Fo<{ a: number; t: () => void }>; // () => void
+
+async function stringPromise() {
+  return "Hello, Semlinker!";
+}
+interface Person {
+  name: string;
+  age: number;
+}
+async function personPromise() {
+  return { name: "Semlinker", age: 30 } as Person;
+}
+type PromiseType<T> = (args: any[]) => Promise<T>;
+type UnPromisify<T> = T extends PromiseType<infer U> ? U : never;
+type extractStringPromise = UnPromisify<typeof stringPromise>; // string
+type extractPersonPromise = UnPromisify<typeof personPromise>; // Person
+
+
+keyof any对应的类型为number | string | symbol，也就是用于做对象键(专业说法叫索引 index)的类型集合
+```
