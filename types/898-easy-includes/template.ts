@@ -9,5 +9,3 @@ type Includes<T extends readonly any[], U> = T extends [
     ? true
     : Includes<Rest, U>
   : false;
-
-type 啊 = Includes<["Kars", "Esidisi", "Wamuu", "Santana"], "Kars">;
